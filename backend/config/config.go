@@ -15,7 +15,6 @@ func Init(env string) {
 	config = viper.New()
 	config.SetConfigType("yaml")
 	config.SetConfigName(env)
-	config.AddConfigPath("../config/")
 	config.AddConfigPath("config/")
 	err := config.ReadInConfig()
 
