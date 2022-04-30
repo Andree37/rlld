@@ -6,5 +6,6 @@ type Shorter struct {
 
 // Shorter logic here
 func (s *Shorter) Shortens() string {
+
 	return s.Url + "potato"
 }
