@@ -12,12 +12,14 @@ func SetupRouter() *gin.Engine {
 
 	// init controllers
 	ping := new(controllers.PingController)
+	shorten := new(controllers.ShorterController)
 
 	// set middleware for auth or other things
 
 	// set routes and groups
 	router.GET("/ping", ping.Ping)
 	router.POST("/ping", ping.DoPing)
+	router.POST("/short", shorten.DoShort)
 
 	return router
 }
