@@ -19,7 +19,8 @@ func SetupRouter() *gin.Engine {
 	// set routes and groups
 	router.GET("/ping", ping.Ping)
 	router.POST("/ping", ping.DoPing)
-	router.POST("/short", shorten.DoShort)
+	router.POST("/short", shorten.URLToShortURL)
+	router.POST("/long", shorten.ShortURLToURL)
 
 	return router
 }

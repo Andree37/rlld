@@ -1,11 +1,9 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/andree37/rlld/config"
 	"github.com/andree37/rlld/db"
@@ -24,13 +22,7 @@ func main() {
 	db.Init()
 	server.Init()
 
-	dbClient := db.GetClient()
+	database := db.GetDB()
 
-	defer func() {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-		defer cancel()
-		if err := dbClient.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
+	defer database.Close()
 }

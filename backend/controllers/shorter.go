@@ -1,21 +1,17 @@
 package controllers
 
 import (
-	"context"
-	"log"
+	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/andree37/rlld/db"
 	"github.com/andree37/rlld/models"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ShorterController struct{}
 
-func (s ShorterController) DoShort(c *gin.Context) {
+func (s ShorterController) URLToShortURL(c *gin.Context) {
 	var shorter models.Shorter
 	err := c.ShouldBindJSON(&shorter)
 	if err != nil {
@@ -24,41 +20,56 @@ func (s ShorterController) DoShort(c *gin.Context) {
 	}
 
 	database := db.GetDB()
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
+	query := `INSERT INTO short ("long_url","short_url") values ($1, $2) RETURNING id`
 
-	res, err := database.Collection("short").InsertOne(ctx, bson.M{"long_url": shorter.Url})
+	stmt, err := database.Prepare(query)
 	if err != nil {
-		log.Printf("something went wrong: %v", err)
-		c.JSON(400, gin.H{"error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	defer stmt.Close()
+
+	var insertedID int
+	err = stmt.QueryRow(shorter.Url, "short").Scan(&insertedID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// compute the short url
+	fmt.Printf("inserted id: %v", insertedID)
+	short_id := models.IDToShortID(insertedID)
+
+	c.JSON(http.StatusOK, gin.H{"short_id": short_id})
+}
+
+func (s ShorterController) ShortURLToURL(c *gin.Context) {
+	var shorter models.Shorter
+	err := c.ShouldBindJSON(&shorter)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if oid, ok := res.InsertedID.(primitive.ObjectID); ok {
+	database := db.GetDB()
+	query := `SELECT "long_url" FROM "short" WHERE "id" = $1`
 
-		short_url, err := shorter.Shortens(oid.Hex())
-		if err != nil {
-			c.JSON(400, gin.H{"error": err.Error()})
-		}
-
-		c.JSON(200, gin.H{"short_url": short_url, "id": oid})
-	} else {
-		c.JSON(400, gin.H{"error": "could not create id"})
+	stmt, err := database.Prepare(query)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+
+	// get the databaseID
+	id := models.ShortIDToID(shorter.ShortUrl)
+
+	var long_url string
+	err = stmt.QueryRow(id).Scan(&long_url)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	defer stmt.Close()
+
+	c.JSON(http.StatusOK, gin.H{"long_url": long_url})
+
 }
-
-// func (s ShorterController) GetUrlFromId(c *gin.Context) {
-// 	var shorter models.Shorter
-// 	err := c.ShouldBindJSON(&shorter)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	database := db.GetDB()
-// 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-// 	defer cancel()
-
-// 	err = database.Collection("short").FindOne(ctx, filter).Decode(&result)
-
-// }

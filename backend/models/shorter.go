@@ -1,59 +1,37 @@
 package models
 
 import (
-	"errors"
-	"fmt"
-	"math/big"
+	"sort"
 	"strings"
 )
 
 type Shorter struct {
-	Url string `json:"url" binding:"required"`
+	Url      string `json:"url"`
+	ShortUrl string `json:"short_url"`
 }
 
 // Shorter logic here
-func (s *Shorter) Shortens(id string) (string, error) {
-
-	return idToShortUrl(id)
-}
-
-func idToShortUrl(id string) (string, error) {
+func IDToShortID(id int) string {
 	m := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	shortURL := ""
+	var shortURL []string
 
-	// convert id to an integer[]
-	var ints []string
-	for _, c := range id {
-		ints = append(ints, fmt.Sprintf("%v", int(c)))
-	}
-	x := strings.Join(ints, "")
-	integer_id := new(big.Int)
-	integer_id, ok := integer_id.SetString(x, 10)
-	if !ok {
-		return "", errors.New("could not turn string into integer")
+	for id > 0 {
+		shortURL = append(shortURL, string(m[id%62]))
+		id /= 62
 	}
 
-	mod_int := new(big.Int)
+	sort.Sort(sort.Reverse(sort.StringSlice(shortURL)))
 
-	for integer_id.Cmp(big.NewInt(0)) > 0 {
-		shortURL += string(m[mod_int.Mod(integer_id, big.NewInt(62)).Int64()])
-		integer_id.Div(integer_id, big.NewInt(62))
-	}
+	url := strings.Join(shortURL, "")
 
-	//reverse the shortURL
-	result := ""
-	for _, v := range shortURL {
-		result = string(v) + result
-	}
-
-	return result, nil
+	return url
 }
 
-func shortURLToID(shortURL string) int {
+func ShortIDToID(shortURL string) int {
 	id := 0
 	for _, v := range shortURL {
 		val_i := int(v)
-		if val_i >= int('a') && val_i <= int('Z') {
+		if val_i >= int('a') && val_i <= int('z') {
 			id = id*62 + val_i - int('a')
 		} else if val_i >= int('A') && val_i <= int('Z') {
 			id = id*62 + val_i - int('Z') + 26
