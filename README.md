@@ -5,10 +5,14 @@ URL shortner that either sends you to the correct url or to some random meme.
 ## Run this locally
 Follow these steps to run this locally
 
-### Database
-To run this locally, ensure that you have docker installed on your machine and run this:
+> TODO: create a docker-compose for the whole application. For now it only runs the database. Bit of an 
 
-> TODO: Create a docker for Postgres so it's easy to run this locally. I'm on exam duty time, sorry I can't do it right now.
+### Database
+To run this locally, ensure that you have docker installed on your machine and it's running.
+Go to the root directory and run this:
+```docker
+docker-compose -f docker-compose.yaml up   
+```
 
 ### Server
 To run the server locally on port 8080 and Postgres connection do:

@@ -20,7 +20,7 @@ func (s ShorterController) URLToShortURL(c *gin.Context) {
 	}
 
 	database := db.GetDB()
-	query := `INSERT INTO short ("long_url","short_url") values ($1, $2) RETURNING id`
+	query := `INSERT INTO tiny_urls ("long_url") values ($1) RETURNING id`
 
 	stmt, err := database.Prepare(query)
 	if err != nil {
@@ -30,7 +30,7 @@ func (s ShorterController) URLToShortURL(c *gin.Context) {
 	defer stmt.Close()
 
 	var insertedID int
-	err = stmt.QueryRow(shorter.Url, "short").Scan(&insertedID)
+	err = stmt.QueryRow(shorter.Url).Scan(&insertedID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -51,7 +51,7 @@ func (s ShorterController) ShortURLToURL(c *gin.Context) {
 	}
 
 	database := db.GetDB()
-	query := `SELECT "long_url" FROM "short" WHERE "id" = $1`
+	query := `SELECT "long_url" FROM "tiny_urls" WHERE "id" = $1`
 
 	stmt, err := database.Prepare(query)
 	if err != nil {
