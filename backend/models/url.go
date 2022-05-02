@@ -7,10 +7,10 @@ import (
 )
 
 type URL struct {
-	ID          int    `json:"id"`
-	OriginalUrl string `json:"original_url"`
-	ShortUrl    string `json:"short_url"`
-	ShortID     string `json:"short_id"`
+	ID          int     `json:"id"`
+	OriginalUrl string  `json:"original_url"`
+	ShortID     string  `json:"short_id"`
+	MemePrctg   float64 `json:"meme_prctg"`
 }
 
 func computeShortURL(id int) string {
@@ -43,7 +43,7 @@ func computeID(shortID string) int {
 
 func (u *URL) TranslateToShortID() error {
 	database := db.GetDB()
-	query := `INSERT INTO tiny_urls ("original_url") values ($1) RETURNING id`
+	query := `INSERT INTO tiny_urls ("original_url", "meme_percentage") values ($1, $2) RETURNING id`
 
 	stmt, err := database.Prepare(query)
 	if err != nil {
@@ -52,21 +52,21 @@ func (u *URL) TranslateToShortID() error {
 	defer stmt.Close()
 
 	var insertedID int
-	err = stmt.QueryRow(u.OriginalUrl).Scan(&insertedID)
+	err = stmt.QueryRow(u.OriginalUrl, u.MemePrctg).Scan(&insertedID)
 	if err != nil {
 		return err
 	}
 
 	computedID := computeShortURL(insertedID)
 
-	u.ShortUrl = computedID
+	u.ShortID = computedID
 
 	return nil
 }
 
 func (u *URL) GetURL() error {
 	database := db.GetDB()
-	query := `SELECT "original_url" FROM "tiny_urls" WHERE "id" = $1`
+	query := `SELECT "original_url", "meme_percentage" FROM "tiny_urls" WHERE "id" = $1`
 
 	// get the databaseID
 	id := computeID(u.ShortID)
@@ -75,7 +75,7 @@ func (u *URL) GetURL() error {
 	if err != nil {
 		return err
 	}
-	err = stmt.QueryRow(id).Scan(&u.OriginalUrl)
+	err = stmt.QueryRow(id).Scan(&u.OriginalUrl, &u.MemePrctg)
 	if err != nil {
 		return err
 	}
