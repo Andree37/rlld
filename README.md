@@ -5,7 +5,7 @@ URL shortner that either sends you to the correct url or to some random meme.
 ## Run this locally
 Follow these steps to run this locally
 
-> TODO: create a docker-compose for the whole application. For now it only runs the database. Bit of an 
+> TODO: create a docker-compose for the whole application. For now it only runs the database. Bit of a meme.
 
 ### Database
 To run this locally, ensure that you have docker installed on your machine and it's running.
