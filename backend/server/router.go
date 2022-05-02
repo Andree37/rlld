@@ -20,7 +20,7 @@ func SetupRouter() *gin.Engine {
 	router.GET("/ping", ping.Ping)
 	router.POST("/ping", ping.DoPing)
 	router.POST("/short", shorten.URLToShortURL)
-	router.POST("/long", shorten.ShortURLToURL)
+	router.GET("/:short_id", shorten.ShortURLToURL)
 
 	return router
 }

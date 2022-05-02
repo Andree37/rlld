@@ -43,12 +43,7 @@ func (s ShorterController) URLToShortURL(c *gin.Context) {
 }
 
 func (s ShorterController) ShortURLToURL(c *gin.Context) {
-	var shorter models.Shorter
-	err := c.ShouldBindJSON(&shorter)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	short_id := c.Param("short_id")
 
 	database := db.GetDB()
 	query := `SELECT "long_url" FROM "tiny_urls" WHERE "id" = $1`
@@ -60,7 +55,7 @@ func (s ShorterController) ShortURLToURL(c *gin.Context) {
 	}
 
 	// get the databaseID
-	id := models.ShortIDToID(shorter.ShortUrl)
+	id := models.ShortIDToID(short_id)
 
 	var long_url string
 	err = stmt.QueryRow(id).Scan(&long_url)
@@ -70,6 +65,10 @@ func (s ShorterController) ShortURLToURL(c *gin.Context) {
 	}
 	defer stmt.Close()
 
-	c.JSON(http.StatusOK, gin.H{"long_url": long_url})
+	//c.JSON(http.StatusOK, gin.H{"long_url": long_url})
+
+	fmt.Printf("long url: %v\n", long_url)
+
+	c.Redirect(http.StatusMovedPermanently, long_url)
 
 }
