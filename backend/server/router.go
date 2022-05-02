@@ -11,16 +11,13 @@ func SetupRouter() *gin.Engine {
 	router.SetTrustedProxies(nil)
 
 	// init controllers
-	ping := new(controllers.PingController)
-	shorten := new(controllers.ShorterController)
+	url := new(controllers.URLController)
 
 	// set middleware for auth or other things
 
 	// set routes and groups
-	router.GET("/ping", ping.Ping)
-	router.POST("/ping", ping.DoPing)
-	router.POST("/short", shorten.URLToShortURL)
-	router.GET("/:short_id", shorten.ShortURLToURL)
+	router.POST("/url/tinify", url.Tinify)
+	router.GET("/:short_id", url.GetURLFromID)
 
 	return router
 }
