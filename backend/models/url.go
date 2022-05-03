@@ -7,6 +7,8 @@ import (
 	"github.com/andree37/rlld/db"
 )
 
+var blacklisted = []string{"ADD HERE THE URL"}
+
 type URL struct {
 	ID          int     `json:"id"`
 	OriginalUrl string  `json:"original_url"`
@@ -44,10 +46,18 @@ func computeID(shortID string) int {
 
 func (u *URL) IsValidURL() (bool, error) {
 	//check if it has a https, if not add it and then test
-	v := u.OriginalUrl[0:7] == "https://"
+
+	v := len(strings.Split(u.OriginalUrl, "https://www")) == 2
 
 	if !v {
-		u.OriginalUrl = "https://" + u.OriginalUrl
+		u.OriginalUrl = "https://www" + u.OriginalUrl
+	}
+
+	// check for blacklisted URLs
+	for _, v := range blacklisted {
+		if v == u.OriginalUrl {
+			return false, nil
+		}
 	}
 
 	r := `https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`

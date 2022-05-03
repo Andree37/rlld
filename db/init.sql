@@ -7,17 +7,4 @@ create table if not exists tiny_urls (
 
 alter table tiny_urls owner to postgres;
 
-alter table memes owner to postgres;
-
 create unique index if not exists tiny_urls_id_uindex on tiny_urls (id);
-
-create unique index if not exists memes_id_uindex on memes (id);
-
--- add more memes here and then perhaps keep this updated in some other way
-
-insert into
-	memes (url)
-values
-	('https://imgur.com/gallery/wJBTzF1');
-
-CREATE EXTENSION tsm_system_rows;
