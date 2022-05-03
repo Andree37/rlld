@@ -8,20 +8,28 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const GAG_SHUFFLE_URL = "https://www.9gag.com/shuffle"
+
 type URLController struct{}
 
 func (s URLController) Tinify(c *gin.Context) {
 	var URLModel models.URL
 	err := c.ShouldBindJSON(&URLModel)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect json"})
+		return
+	}
+	// check if the URL is valid
+	valid, err := URLModel.IsValidURL()
+	if err != nil || !valid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect URL type"})
 		return
 	}
 
 	// compute the short url
 	err = URLModel.TranslateToShortID()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Could not insert URL"})
 		return
 	}
 
@@ -30,7 +38,6 @@ func (s URLController) Tinify(c *gin.Context) {
 
 func (s URLController) GetURLFromID(c *gin.Context) {
 	var URLModel models.URL
-	var MemeModel models.Meme
 
 	URLModel.ShortID = c.Param("short_id")
 	err := URLModel.GetURL()
@@ -43,9 +50,7 @@ func (s URLController) GetURLFromID(c *gin.Context) {
 	if r > URLModel.MemePrctg {
 		c.Redirect(http.StatusMovedPermanently, URLModel.OriginalUrl)
 	} else {
-		MemeModel.GetRandomMeme()
-		// fetch a meme here
-		c.Redirect(http.StatusMovedPermanently, MemeModel.Url)
+		// fetch a meme from the 9gag randomizer, ty 9gag for making life easy :)
+		c.Redirect(http.StatusMovedPermanently, GAG_SHUFFLE_URL)
 	}
-
 }

@@ -5,12 +5,6 @@ create table if not exists tiny_urls (
 	created_at timestamp default current_timestamp
 );
 
-create table if not exists memes (
-	id serial constraint memes_pk primary key,
-	url varchar not null,
-	added_at timestamp default current_timestamp
-);
-
 alter table tiny_urls owner to postgres;
 
 alter table memes owner to postgres;
