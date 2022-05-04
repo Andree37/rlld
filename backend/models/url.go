@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/andree37/rlld/db"
+	"github.com/jxskiss/base62"
 )
 
 var blacklisted = []string{"ADD HERE THE URL"}
@@ -16,32 +17,12 @@ type URL struct {
 	MemePrctg   float64 `json:"meme_prctg"`
 }
 
-func computeShortURL(id int) string {
-	m := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	var shortURL []string
-
-	for id > 0 {
-		shortURL = append(shortURL, string(m[id%62]))
-		id /= 62
-	}
-
-	return strings.Join(shortURL, "")
+func base10ToBase62(num int64) string {
+	return string(base62.FormatInt(num))
 }
 
-func computeID(shortID string) int {
-	id := 0
-	for i := len(shortID) - 1; i >= 0; i-- {
-		val_i := int(shortID[i])
-		if val_i >= int('a') && val_i <= int('z') {
-			id = id*62 + val_i - int('a')
-		} else if val_i >= int('A') && val_i <= int('Z') {
-			id = id*62 + val_i - int('Z') + 26
-		} else {
-			id = id*62 + val_i - int('0') + 52
-		}
-	}
-
-	return id
+func base62ToBase10(s string) (int64, error) {
+	return base62.ParseInt([]byte(s))
 }
 
 func (u *URL) IsValidURL() (bool, error) {
@@ -80,13 +61,13 @@ func (u *URL) TranslateToShortID() error {
 	}
 	defer stmt.Close()
 
-	var insertedID int
+	var insertedID int64
 	err = stmt.QueryRow(u.OriginalUrl, u.MemePrctg).Scan(&insertedID)
 	if err != nil {
 		return err
 	}
 
-	computedID := computeShortURL(insertedID)
+	computedID := base10ToBase62(insertedID)
 
 	u.ShortID = computedID
 
@@ -98,7 +79,10 @@ func (u *URL) GetURL() error {
 	query := `SELECT "original_url", "meme_percentage" FROM "tiny_urls" WHERE "id" = $1`
 
 	// get the databaseID
-	id := computeID(u.ShortID)
+	id, err := base62ToBase10(u.ShortID)
+	if err != nil {
+		return err
+	}
 
 	stmt, err := database.Prepare(query)
 	if err != nil {

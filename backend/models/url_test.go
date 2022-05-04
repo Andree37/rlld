@@ -6,26 +6,32 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestComputeShortURL(t *testing.T) {
-	id := 12345
-	id2 := 123
+func TestBase10ToBase62(t *testing.T) {
+	id := int64(12345)
+	id2 := int64(123)
+	id3 := int64(1231231233213123)
 
-	shortID := computeShortURL(id)
-	shortID2 := computeShortURL(id2)
+	shortID := base10ToBase62(id)
+	shortID2 := base10ToBase62(id2)
+	shortID3 := base10ToBase62(id3)
 
-	assert.Equal(t, "hnd", shortID)
-	assert.Equal(t, "9b", shortID2)
+	assert.Equal(t, "DNH", shortID)
+	assert.Equal(t, "B9", shortID2)
+	assert.Equal(t, "FnmgAry3B", shortID3)
 }
 
-func TestComputeID(t *testing.T) {
-	shortID := "hnd"
-	shortID2 := "9b"
+func TestBase62ToBase10(t *testing.T) {
+	shortID := "DNH"
+	shortID2 := "B9"
+	shortID3 := "FnmgAry3B"
 
-	id := computeID(shortID)
-	id2 := computeID(shortID2)
+	id, _ := base62ToBase10(shortID)
+	id2, _ := base62ToBase10(shortID2)
+	id3, _ := base62ToBase10(shortID3)
 
-	assert.Equal(t, 12345, id)
-	assert.Equal(t, 123, id2)
+	assert.Equal(t, int64(12345), id)
+	assert.Equal(t, int64(123), id2)
+	assert.Equal(t, int64(1231231233213123), id3)
 }
 
 func TestIsValidURL(t *testing.T) {
