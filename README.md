@@ -17,5 +17,11 @@ docker-compose -f docker-compose.yaml up
 ### Server
 To run the server locally on port 8080 and Postgres connection do:
 ```terminal
-cd backend; go run .
+go run .
+```
+
+### Test the App
+To run some *pristine* unit tests do:
+```terminal
+go test ./...
 ```
