@@ -48,9 +48,9 @@ func (s URLController) GetURLFromID(c *gin.Context) {
 
 	r := rand.Float64()
 	if r > URLModel.MemePrctg {
-		c.Redirect(http.StatusMovedPermanently, URLModel.OriginalUrl)
+		c.Redirect(http.StatusSeeOther, URLModel.OriginalUrl)
 	} else {
 		// fetch a meme from the 9gag randomizer, ty 9gag for making life easy :)
-		c.Redirect(http.StatusMovedPermanently, GAG_SHUFFLE_URL)
+		c.Redirect(http.StatusSeeOther, GAG_SHUFFLE_URL)
 	}
 }
