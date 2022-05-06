@@ -33,7 +33,7 @@ func (s URLController) Tinify(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"short_id": URLModel.ShortID})
+	c.JSON(http.StatusCreated, gin.H{"short_id": URLModel.ShortID})
 }
 
 func (s URLController) GetURLFromID(c *gin.Context) {

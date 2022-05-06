@@ -1,15 +1,24 @@
 package server
 
 import (
+	"fmt"
+
+	"github.com/andree37/rlld/config"
 	"github.com/andree37/rlld/controllers"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRouter() *gin.Engine {
+	c := config.Getconfig()
+	frontend := fmt.Sprintf("%s://%s:%d", c.GetString("frontend.protocol"), c.GetString("frontend.ip"), c.GetInt("frontend.port"))
+
 	router := gin.Default()
 	// add here the frontend ip
-	router.SetTrustedProxies(nil)
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = []string{frontend}
 
+	router.Use(cors.New(corsConfig))
 	// init controllers
 	url := new(controllers.URLController)
 
