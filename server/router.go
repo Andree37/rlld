@@ -14,6 +14,7 @@ func SetupRouter() *gin.Engine {
 	frontend := fmt.Sprintf("%s://%s:%d", c.GetString("frontend.protocol"), c.GetString("frontend.ip"), c.GetInt("frontend.port"))
 
 	router := gin.Default()
+	router.SetTrustedProxies(nil)
 	// add here the frontend ip
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowOrigins = []string{frontend}
