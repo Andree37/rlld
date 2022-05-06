@@ -31,7 +31,7 @@ func (u *URL) IsValidURL() (bool, error) {
 	v := len(strings.Split(u.OriginalUrl, "https://www")) == 2
 
 	if !v {
-		u.OriginalUrl = "https://www" + u.OriginalUrl
+		u.OriginalUrl = "https://www." + u.OriginalUrl
 	}
 
 	// check for blacklisted URLs
