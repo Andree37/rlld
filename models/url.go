@@ -1,8 +1,7 @@
 package models
 
 import (
-	"regexp"
-	"strings"
+	"net/url"
 
 	"github.com/andree37/rlld/db"
 	"github.com/jxskiss/base62"
@@ -26,29 +25,20 @@ func base62ToBase10(s string) (int64, error) {
 }
 
 func (u *URL) IsValidURL() (bool, error) {
-	//check if it has a https, if not add it and then test
 
-	v := len(strings.Split(u.OriginalUrl, "https://www")) == 2
-
-	if !v {
-		u.OriginalUrl = "https://www." + u.OriginalUrl
-	}
-
-	// check for blacklisted URLs
-	for _, v := range blacklisted {
-		if v == u.OriginalUrl {
-			return false, nil
-		}
-	}
-
-	r := `https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`
-
-	match, err := regexp.MatchString(r, u.OriginalUrl)
+	resp, err := url.ParseRequestURI(u.OriginalUrl)
 	if err != nil {
 		return false, err
 	}
 
-	return match, nil
+	// check for blacklisted URLs
+	for _, v := range blacklisted {
+		if v == resp.Host {
+			return false, nil
+		}
+	}
+
+	return true, nil
 }
 
 func (u *URL) TranslateToShortID() error {
