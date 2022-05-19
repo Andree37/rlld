@@ -1,24 +1,23 @@
 # rlld.co
 
-URL shortner that either sends you to the correct url or to some random meme.
+URL shorter that either sends you to the correct url or to some random meme.
 
 ## Run this locally
-Follow these steps to run this locally
+Follow these steps to run this locally:
 
-> TODO: create a docker-compose for the whole application. For now it only runs the database. Bit of a meme.
+### Setup Environment
+Create a .env using the one in the `.env.example` and set the variables to something that makes sense to you :)
 
-### Database
-To run this locally, ensure that you have docker installed on your machine and it's running.
+### Run 
+To run this locally, ensure that you have docker installed on your machine, and it's up and running.
 Go to the root directory and run this:
 ```docker
 docker-compose -f docker-compose.yaml up   
 ```
 
-### Server
-To run the server locally on port 8080 and Postgres connection do:
-```terminal
-go run .
-```
+It runs the server containing the static frontend files and a database.
+
+Access `http://localhost:8080` on your browser and enjoy the app.
 
 ### Test the App
 To run some *pristine* unit tests do:

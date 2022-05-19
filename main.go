@@ -2,24 +2,17 @@ package main
 
 import (
 	"database/sql"
-	"flag"
-	"fmt"
-	"os"
-
-	"github.com/andree37/rlld/config"
 	"github.com/andree37/rlld/db"
 	"github.com/andree37/rlld/server"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-
-	environment := flag.String("e", "development", "")
-	flag.Usage = func() {
-		fmt.Println("Usage server -e {mode}")
-		os.Exit(1)
+	err := godotenv.Load(".env")
+	if err != nil {
+		panic("Something went wrong with the .env")
 	}
-	flag.Parse()
-	config.Init(*environment)
+
 	db.Init()
 	server.Init()
 

@@ -1,9 +1,15 @@
 package server
 
-import "github.com/andree37/rlld/config"
+import (
+	"fmt"
+	"os"
+)
 
 func Init() {
-	config := config.Getconfig()
 	r := SetupRouter()
-	r.Run(config.GetString("server.port"))
+	fmt.Printf(" server port i:%v\n", os.Getenv("SERVER_PORT"))
+	err := r.Run(":" + os.Getenv("SERVER_PORT"))
+	if err != nil {
+		return
+	}
 }

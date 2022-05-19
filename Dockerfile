@@ -1,23 +1,19 @@
-ARG GO_VERSION=1.13
+FROM golang:1.13
 
-FROM golang:${GO_VERSION}-alpine AS builder
+# Set the Current Working Directory inside the container
+WORKDIR $GOPATH/src/github.com/andree37/rlld
 
-RUN apk update && apk add alpine-sdk git && rm -rf /var/cache/apk/*
-
-RUN mkdir -p /api
-WORKDIR /api
-
-COPY go.mod .
-COPY go.sum .
-RUN go mod download
-
+# Copy everything from the current directory to the PWD (Present Working Directory) inside the container
 COPY . .
-RUN go build -o ./app main.go
 
-FROM alpine:latest
+# Download all the dependencies
+RUN go get -d -v ./...
 
-RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
+# Install the package
+RUN go install -v ./...
 
+# This container exposes port 8080 to the outside world
 EXPOSE 8080
 
-ENTRYPOINT ["./app"]
+# Run the executable
+CMD ["rlld"]

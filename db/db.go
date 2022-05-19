@@ -3,8 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
-	"github.com/andree37/rlld/config"
 	_ "github.com/lib/pq"
 )
 
@@ -12,16 +12,14 @@ var db *sql.DB
 
 func Init() {
 
-	c := config.Getconfig()
-
-	host := c.GetString("db.host")
-	port := c.GetInt("db.port")
-	user := c.GetString("db.user")
-	password := c.GetString("db.password")
-	dbname := c.GetString("db.dbname")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_DBNAME")
 
 	var err error
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	psqlconn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err = sql.Open("postgres", psqlconn)
 	fmt.Printf("host name is: %v\n", host)
 	if err != nil {
