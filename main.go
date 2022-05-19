@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
 	"os"
@@ -24,5 +25,10 @@ func main() {
 
 	database := db.GetDB()
 
-	defer database.Close()
+	defer func(database *sql.DB) {
+		err := database.Close()
+		if err != nil {
+
+		}
+	}(database)
 }
