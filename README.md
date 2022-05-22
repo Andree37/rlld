@@ -15,9 +15,7 @@ Go to the root directory and run this:
 docker-compose -f docker-compose.yaml up   
 ```
 
-It runs the server containing the static frontend files and a database.
-
-Access `http://localhost:8080` on your browser and enjoy the app.
+Access `http://localhost:8080` on your browser and enjoy the api.
 
 ### Test the App
 To run some *pristine* unit tests do:

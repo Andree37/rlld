@@ -17,6 +17,8 @@ services:
     restart: on-failure
     env_file:
       - .env
+    environment:
+      - RELEASE_MODE=release
     depends_on:
       - db
     ports:
