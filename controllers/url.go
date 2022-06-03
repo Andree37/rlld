@@ -9,6 +9,7 @@ import (
 )
 
 const GAG_SHUFFLE_URL = "https://www.9gag.com/shuffle"
+const RICK_ROLL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 type URLController struct{}
 
@@ -51,6 +52,7 @@ func (s URLController) GetURLFromID(c *gin.Context) {
 		c.Redirect(http.StatusSeeOther, URLModel.OriginalUrl)
 	} else {
 		// fetch a meme from the 9gag randomizer, ty 9gag for making life easy :)
-		c.Redirect(http.StatusSeeOther, GAG_SHUFFLE_URL)
+		//c.Redirect(http.StatusSeeOther, GAG_SHUFFLE_URL)
+		c.Redirect(http.StatusSeeOther, RICK_ROLL)
 	}
 }
