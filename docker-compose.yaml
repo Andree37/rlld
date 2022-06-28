@@ -25,18 +25,18 @@ services:
       - "8080:8080"
     links:
       - db
-  frontend:
-    container_name: frontend
-    build: ../rlld-frontend/.
-    restart: on-failure
-    env_file:
-      - ../rlld-frontend/.env
-    ports:
-      - "80:80"
-    depends_on:
-      - server
-    links:
-      - server
+#  frontend:
+#    container_name: frontend
+#    build: ../rlld-frontend/.
+#    restart: on-failure
+#    env_file:
+#      - ../rlld-frontend/.env
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - server
+#    links:
+#      - server
 volumes:
   db:
     driver: local
