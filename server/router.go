@@ -42,6 +42,7 @@ func SetupRouter() *gin.Engine {
 	api := router.Group("api")
 	api.POST("/tinify", url.Tinify)
 	api.GET("/:short_id", url.GetURLFromID)
+	api.GET("/", url.EchoHi)
 
 	return router
 }

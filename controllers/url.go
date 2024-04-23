@@ -13,6 +13,10 @@ const RICK_ROLL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 type URLController struct{}
 
+func (s URLController) EchoHi(c *gin.Context) {
+	c.JSON(http.StatusCreated, gin.H{"Hello": "World"})
+}
+
 func (s URLController) Tinify(c *gin.Context) {
 	var URLModel models.URL
 	err := c.ShouldBindJSON(&URLModel)
